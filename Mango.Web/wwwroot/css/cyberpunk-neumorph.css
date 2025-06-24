@@ -1,0 +1,81 @@
+:root {
+    --cyber-gray-bg: #2a2d33;
+    --cyber-gray-light: #3a3d44;
+    --cyber-gray-dark: #1f2125;
+    --cyber-accent: #44d7b6; /* sanfteres Cyan */
+    --cyber-accent2: #c86dd7; /* dezentes Lila */
+    --cyber-shadow-light: #404349;
+    --cyber-shadow-dark: #1f2125;
+    --cyber-border-radius: 1.2rem;
+}
+
+body {
+    background: var(--cyber-gray-bg);
+    color: #ccc;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.card, .form-control, .btn, .navbar, .modal-content {
+    background: var(--cyber-gray-light) !important;
+    border-radius: var(--cyber-border-radius) !important;
+    box-shadow: 4px 4px 8px var(--cyber-shadow-dark), -4px -4px 8px var(--cyber-shadow-light);
+    border: none !important;
+    color: #ccc !important;
+}
+
+.btn-primary, .btn-secondary {
+    background: linear-gradient(90deg, var(--cyber-accent), var(--cyber-accent2));
+    color: #222 !important;
+    border: none;
+    box-shadow: 0 1px 4px var(--cyber-accent2), 0 0 0 1px var(--cyber-accent);
+    text-shadow: none;
+    transition: background 0.3s;
+}
+
+    .btn-primary:hover, .btn-secondary:hover {
+        background: linear-gradient(90deg, var(--cyber-accent2), var(--cyber-accent));
+        color: #fff !important;
+    }
+
+.navbar {
+    background: var(--cyber-gray-dark) !important;
+    box-shadow: 0 1px 8px var(--cyber-accent2);
+}
+
+input.form-control, textarea.form-control, select.form-control {
+    background: var(--cyber-gray-light) !important;
+    border-radius: var(--cyber-border-radius) !important;
+    box-shadow: inset 2px 2px 4px var(--cyber-shadow-dark), inset -2px -2px 4px var(--cyber-shadow-light);
+    color: #ccc !important;
+    border: none !important;
+}
+
+    input.form-control:focus, textarea.form-control:focus, select.form-control:focus {
+        outline: 1.5px solid var(--cyber-accent);
+        box-shadow: 0 0 6px var(--cyber-accent2);
+    }
+
+.card {
+    border: none !important;
+    box-shadow: 4px 4px 8px var(--cyber-shadow-dark), -4px -4px 8px var(--cyber-shadow-light), 0 0 8px 1px var(--cyber-accent2);
+}
+
+a, .nav-link {
+    color: var(--cyber-accent);
+    text-shadow: none;
+    transition: color 0.2s;
+}
+
+    a:hover, .nav-link:hover {
+        color: var(--cyber-accent2);
+    }
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: var(--cyber-gray-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cyber-accent2);
+    border-radius: 6px;
+}

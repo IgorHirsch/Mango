@@ -4,21 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mango.Services.CouponAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/coupon")]
     [ApiController]
-    public class CouponAPIController : ControllerBase
+    public class CouponAPIController(AppDbContext db, IMapper mapper) : ControllerBase
     {
-        private readonly AppDbContext _db;
-        private IMapper _mapper;
-
-        public CouponAPIController(AppDbContext db, IMapper mapper)
-        {
-            _db = db;
-            _mapper = mapper;
-        }
-
-
-
+        private readonly AppDbContext _db = db;
+        private readonly IMapper _mapper = mapper;
 
         [HttpGet]
         public ActionResult<ApiResponse<IEnumerable<CouponDto>>> Get()
@@ -108,7 +99,7 @@ namespace Mango.Services.CouponAPI.Controllers
                     response.Message = "Coupon nicht gefunden";
                     return NotFound(response);
                 }
-                coupon.CouponCode = couponDto.CouponCode;
+                coupon.CouponCode = couponDto.CouponCode ?? string.Empty;
                 coupon.DiscountAmount = couponDto.DiscountAmount;
                 coupon.MinAmount = couponDto.MinAmount;
                 _db.SaveChanges();

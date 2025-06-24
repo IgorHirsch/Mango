@@ -6,10 +6,8 @@ namespace Mango.Services.CouponAPI.Models
     {
         [Key]
         public int CouponId { get; set; }
-
         [Required]
         public string CouponCode { get; set; }
-
         [Required]
         public decimal DiscountAmount { get; set; }
         public int MinAmount { get; set; }
