@@ -1,4 +1,4 @@
-﻿using Mango.Web.Models;
+﻿using Mango.Web.Models.Coupon;
 using Mango.Web.Service.IService;
 using Newtonsoft.Json;
 using System.Net;
@@ -8,17 +8,30 @@ using static Mango.Web.Utility.SD;
 
 namespace Mango.Web.Service
 {
-    public class BaseService(IHttpClientFactory httpClientFactory) : IBaseService
+
+
+    public class BaseService(IHttpClientFactory httpClientFactory, ITokenProvider tokenProvider) : IBaseService
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly ITokenProvider _tokenProvider = tokenProvider;
 
-        public async Task<ResponseDto?> SendAsync(RequestDto requestDto)
+        public async Task<ResponseDTO?> SendAsync(RequestDto requestDto, bool withBearer = true)
         {
             try
             {
                 HttpRequestMessage message = new();
                 message.Headers.Add("Accept", "application/json");
+
+                if (withBearer)
+                {
+                    var token = _tokenProvider.GetToken();
+                    message.Headers.Add("Authorization", $"Bearer {token}");
+                }
+
+
                 message.RequestUri = new Uri(requestDto.Url);
+
+
 
                 // Setze Body, falls vorhanden
                 if (requestDto.Data != null)
@@ -72,13 +85,13 @@ namespace Mango.Web.Service
                         return new() { IsSuccess = false, Message = "Internal Server Error" };
                     default:
                         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                        var responseDto = JsonConvert.DeserializeObject<ResponseDto>(apiContent);
+                        var responseDto = JsonConvert.DeserializeObject<ResponseDTO>(apiContent);
                         return responseDto;
                 }
             }
             catch (Exception ex)
             {
-                return new ResponseDto
+                return new ResponseDTO
                 {
                     IsSuccess = false,
                     Message = ex.Message

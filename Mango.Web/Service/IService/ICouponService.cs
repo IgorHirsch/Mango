@@ -1,14 +1,14 @@
-﻿using Mango.Web.Models;
+﻿using Mango.Web.Models.Coupon;
 
 namespace Mango.Web.Service.IService
 {
     public interface ICouponService
     {
-        Task<ResponseDto?> GetCouponAsync(string couponCode);
-        Task<ResponseDto?> GetAllCouponsAsync();
-        Task<ResponseDto?> GetCouponByIdAsync(int id);
-        Task<ResponseDto?> CreateCouponsAsync(CouponDto couponDto);
-        Task<ResponseDto?> UpdateCouponsAsync(CouponDto couponDto);
-        Task<ResponseDto?> DeleteCouponsAsync(int id);
+        Task<ResponseDTO?> GetCouponAsync(string couponCode);
+        Task<ResponseDTO?> GetAllCouponsAsync();
+        Task<ResponseDTO?> GetCouponByIdAsync(int id);
+        Task<ResponseDTO?> CreateCouponsAsync(CouponDto couponDto);
+        Task<ResponseDTO?> UpdateCouponsAsync(CouponDto couponDto);
+        Task<ResponseDTO?> DeleteCouponsAsync(int id);
     }
 }

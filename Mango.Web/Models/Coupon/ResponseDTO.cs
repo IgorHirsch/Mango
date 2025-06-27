@@ -1,10 +1,10 @@
-namespace Mango.Services.CouponAPI.Models
+namespace Mango.Web.Models.Coupon
 {
-    public class ApiResponse<T>
+    public class ResponseDTO
     {
         public bool IsSuccess { get; set; } = true;
         public string Message { get; set; } = string.Empty;
-        public T? Data { get; set; }
+        public object? Data { get; set; }
         public List<string>? Errors { get; set; }
     }
 }

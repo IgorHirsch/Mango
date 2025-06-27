@@ -1,6 +1,6 @@
 using static Mango.Web.Utility.SD;
 
-namespace Mango.Web.Models
+namespace Mango.Web.Models.Coupon
 {
     public class RequestDto
     {
