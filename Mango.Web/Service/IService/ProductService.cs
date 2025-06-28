@@ -1,4 +1,5 @@
-﻿using Mango.Web.Models.Coupon;
+﻿using Mango.Web.Models;
+using Mango.Web.Models.Coupon;
 using Mango.Web.Models.Product;
 using Mango.Web.Utility;
 

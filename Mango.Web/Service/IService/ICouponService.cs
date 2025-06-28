@@ -1,4 +1,5 @@
-﻿using Mango.Web.Models.Coupon;
+﻿using Mango.Web.Models;
+using Mango.Web.Models.Coupon;
 
 namespace Mango.Web.Service.IService
 {
