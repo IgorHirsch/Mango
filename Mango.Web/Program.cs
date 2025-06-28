@@ -12,10 +12,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<ICouponService, CouponService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
+builder.Services.AddHttpClient<IProductService, ProductService>();
 
 
 // Retrieve the base URL for the Coupon API from configuration
 var couponApiBase = builder.Configuration["ServiceURLs:CouponAPI"];
+
+
 if (string.IsNullOrEmpty(couponApiBase))
 {
     throw new InvalidOperationException("Die Konfiguration für 'ServiceURLs:CouponAPI' ist nicht vorhanden oder leer.");
@@ -32,11 +35,12 @@ SD.CouponAPIBase = couponApiBase;
 SD.AuthAPIBase = builder.Configuration["ServiceURLs:AuthAPI"];
 
 
-
+SD.ProductAPIBase = builder.Configuration["ServiceURLs:ProductAPI"];
 
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

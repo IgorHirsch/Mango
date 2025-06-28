@@ -125,7 +125,7 @@ namespace Mango.Services.CouponAPI.Controllers
 
 
         [HttpDelete("{id:int}")]
-
+        [Authorize(Roles = "ADMIN")]
         public ActionResult<ApiResponse<bool>> Delete(int id)
         {
             var response = new ApiResponse<bool>();
