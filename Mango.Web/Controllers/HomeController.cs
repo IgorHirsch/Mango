@@ -1,4 +1,5 @@
 using Mango.Web.Models;
+using Mango.Web.Models.Cart;
 using Mango.Web.Models.Product;
 using Mango.Web.Service.IService;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +14,14 @@ namespace Mango.Web.Controllers
 
 
         private readonly IProductService _productService;
-        public HomeController(IProductService productService)
+        private readonly ICartService _cartService;
+
+
+
+        public HomeController(IProductService productService, ICartService cartService)
         {
             _productService = productService;
+            _cartService = cartService;
         }
 
 
@@ -30,7 +36,7 @@ namespace Mango.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                list = JsonConvert.DeserializeObject<List<ProductDTO>>(Convert.ToString(response.Data));
+                list = JsonConvert.DeserializeObject<List<ProductDTO>>(Convert.ToString(response.Data) ?? string.Empty);
             }
             else
             {
@@ -53,7 +59,7 @@ namespace Mango.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                model = JsonConvert.DeserializeObject<ProductDTO>(Convert.ToString(response.Data));
+                model = JsonConvert.DeserializeObject<ProductDTO>(Convert.ToString(response.Data)?? string.Empty);
             }
             else
             {
@@ -62,6 +68,62 @@ namespace Mango.Web.Controllers
 
             return View(model);
         }
+        [Authorize]
+
+        [HttpPost]
+        [ActionName("ProductDetails")]
+        public async Task<IActionResult> ProductDetails(ProductDTO productDto)
+        {
+            // Erstellt ein neues CartDTO-Objekt mit dem aktuellen Benutzer als CartHeader
+            // Liest die UserId aus dem Authentifizierungs-Token ("sub"-Claim)
+            CartDTO cartDto = new CartDTO()
+            {
+                CartHeader = new CartHeaderDTO
+                {
+                    UserId = User.FindFirst("sub")?.Value
+                }
+            };
+
+            
+            CartDetailsDTO cartDetails = new CartDetailsDTO()
+            {
+                Count = productDto.Count,
+                ProductId = productDto.ProductId,
+            };
+
+            
+            List<CartDetailsDTO> cartDetailsDtos = new() { cartDetails };
+            cartDto.CartDetails = cartDetailsDtos;
+
+            // Sendet den aktuellen Warenkorb (cartDto) an den Cart-Service, um ihn zu speichern oder zu aktualisieren
+            ResponseDTO? response = await _cartService.UpsertCartAsync(cartDto);
+
+            // Prüft das Ergebnis und zeigt eine Erfolgsmeldung oder einen Fehler an
+            if (response != null && response.IsSuccess)
+            {       
+                TempData["success"] = "Item has been added to the Shopping Cart";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+
+            // Gibt das Produktmodell zurück, falls ein Fehler aufgetreten ist
+            return View(productDto);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
         public IActionResult Privacy()
         {

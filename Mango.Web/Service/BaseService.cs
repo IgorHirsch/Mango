@@ -30,6 +30,8 @@ namespace Mango.Web.Service
                 }
 
 
+                if (string.IsNullOrEmpty(requestDto.Url))
+                    throw new ArgumentNullException(nameof(requestDto.Url), "Request URL cannot be null or empty.");
                 message.RequestUri = new Uri(requestDto.Url);
 
 
