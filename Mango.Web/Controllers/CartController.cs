@@ -88,5 +88,38 @@ namespace Mango.Web.Controllers
             }
             return new CartDTO();
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EmailCart(CartDTO cartDto)
+        {
+            // Load the cart for the logged-in user
+            CartDTO cart = await LoadCartDtoBasedOnLoggedInUser();
+
+            // Set the email from the logged-in user's claims
+            cart.CartHeader.Email = User.Claims
+                .Where(c => c.Type == JwtRegisteredClaimNames.Email)
+                .FirstOrDefault()?.Value;
+
+            // Ensure the email is not null or empty before proceeding
+            if (string.IsNullOrEmpty(cart.CartHeader.Email))
+            {
+                TempData["error"] = "Email address is missing.";
+                return RedirectToAction(nameof(CartIndex));
+            }
+
+            // Call the EmailCart service method
+            ResponseDTO? response = await _cartService.EmailCart(cart);
+
+            // Check the response and handle success or failure
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Email will be processed and sent shortly.";
+                return RedirectToAction(nameof(CartIndex));
+            }
+
+            TempData["error"] = "Failed to send the email.";
+            return RedirectToAction(nameof(CartIndex));
+        }
     }
 }

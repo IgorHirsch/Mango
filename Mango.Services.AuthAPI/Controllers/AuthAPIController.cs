@@ -1,4 +1,5 @@
-﻿using Mango.Services.AuthAPI.Models;
+﻿using Mango.MessageBus;
+using Mango.Services.AuthAPI.Models;
 using Mango.Services.AuthAPI.Service.IService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +12,19 @@ namespace Mango.Services.AuthAPI.Controllers
     {
 
         private readonly IAuthService _authService;
+        private readonly IMessageBus _messageBus;
+        private readonly IConfiguration _configuration;
+
+
+
+
         protected ResponseDTO _response;
-        public AuthAPIController(IAuthService authService)
+        public AuthAPIController(IAuthService authService, IConfiguration configuration, IMessageBus messageBus)
         {
             _authService = authService;
             _response = new();
+            _configuration = configuration;
+            _messageBus = messageBus;
         }
 
 
@@ -29,6 +38,7 @@ namespace Mango.Services.AuthAPI.Controllers
                 _response.Message = errorMessage;
                 return BadRequest(_response);
             }
+            await _messageBus.PublishMessage(model.Email, _configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue"));
             return Ok(_response);
         }
 

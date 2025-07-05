@@ -1,4 +1,4 @@
-﻿namespace Mango.Services.ShoppingCartAPI.Models.DTO
+﻿namespace Mango.Services.EmailAPI.Models.DTO
 {
     public class CartHeaderDTO
     {
