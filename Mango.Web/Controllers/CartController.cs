@@ -1,7 +1,9 @@
 using Mango.Web.Models;
 using Mango.Web.Models.Cart;
 using Mango.Web.Models.Order;
+using Mango.Web.Models.Stripe;
 using Mango.Web.Service.IService;
+using Mango.Web.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -125,46 +127,51 @@ namespace Mango.Web.Controllers
         {
 
             CartDTO cart = await LoadCartDtoBasedOnLoggedInUser();
-            if (cart.CartHeader != null && cartDto.CartHeader != null)
-            {
-                cart.CartHeader.Phone = cartDto.CartHeader.Phone;
-                cart.CartHeader.Email = cartDto.CartHeader.Email;
-                cart.CartHeader.Name = cartDto.CartHeader.Name;
-            }
+            cart.CartHeader.Phone = cartDto.CartHeader.Phone;
+            cart.CartHeader.Email = cartDto.CartHeader.Email;
+            cart.CartHeader.Name = cartDto.CartHeader.Name;
 
             var response = await _orderService.CreateOrder(cart);
-
+            OrderHeaderDTO orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDTO>(Convert.ToString(response.Data));
 
             if (response != null && response.IsSuccess)
             {
-                OrderHeaderDTO? orderHeaderDto = null;
-                if (response.Data != null)
-                {
-                    var dataString = Convert.ToString(response.Data);
-                    if (!string.IsNullOrEmpty(dataString))
-                    {
-                        orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDTO>(dataString);
-                    }
-                }
+                //get stripe session and redirect to stripe to place order
+                //
+                var domain = Request.Scheme + "://" + Request.Host.Value + "/";
 
-                if (orderHeaderDto != null)
+                StripeRequestDTO stripeRequestDto = new()
                 {
-                    TempData["success"] = "Yes.";
-                    return View(cart);
-                }
-                else
-                {
-                    TempData["error"] = "Order creation failed. Please try again.";
-                    return View(cart);
-                }
+                    ApprovedUrl = domain + "cart/Confirmation?orderId=" + orderHeaderDto.OrderHeaderId,
+                    CancelUrl = domain + "cart/checkout",
+                    OrderHeader = orderHeaderDto
+                };
+
+                var stripeResponse = await _orderService.CreateStripeSession(stripeRequestDto);
+                StripeRequestDTO stripeResponseResult = JsonConvert.DeserializeObject<StripeRequestDTO>
+                                            (Convert.ToString(stripeResponse.Data));
+                Response.Headers.Add("Location", stripeResponseResult.StripeSessionUrl);
+                return new StatusCodeResult(303);
+
             }
-
-            TempData["error"] = "Order creation failed. Please try again.";
-
-            // ?? FIX: Always return the model
-            return View(cart);
+            return View();
         }
 
 
+        public async Task<IActionResult> Confirmation(int orderId)
+        {
+            ResponseDTO? response = await _orderService.ValidateStripeSession(orderId);
+            if (response != null & response.IsSuccess)
+            {
+
+                OrderHeaderDTO orderHeader = JsonConvert.DeserializeObject<OrderHeaderDTO>(Convert.ToString(response.Data));
+                if (orderHeader.Status == SD.Status_Approved)
+                {
+                    return View(orderId);
+                }
+            }
+            //redirect to some error page based on status
+            return View(orderId);
+        }
     }
 }

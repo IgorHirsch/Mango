@@ -2,6 +2,7 @@
 
 using Mango.Web.Models;
 using Mango.Web.Models.Cart;
+using Mango.Web.Models.Stripe;
 using Mango.Web.Service.IService;
 using Mango.Web.Utility;
 
@@ -24,6 +25,26 @@ namespace Mango.Web.Service
                 ApiType = SD.ApiType.POST,
                 Data = cartDto,
                 Url = SD.OrderAPIBase + "/api/order/CreateOrder"
+            });
+        }
+
+        public async Task<ResponseDTO?> CreateStripeSession(StripeRequestDTO stripeRequestDto)
+        {
+            return await _baseService.SendAsync(new RequestDTO()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = stripeRequestDto,
+                Url = SD.OrderAPIBase + "/api/order/CreateStripeSession"
+            });
+        }
+
+        public async Task<ResponseDTO?> ValidateStripeSession(int orderHeaderId)
+        {
+            return await _baseService.SendAsync(new RequestDTO()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = orderHeaderId,
+                Url = SD.OrderAPIBase + "/api/order/ValidateStripeSession"
             });
         }
 

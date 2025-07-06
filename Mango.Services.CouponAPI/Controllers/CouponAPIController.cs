@@ -76,6 +76,24 @@ namespace Mango.Services.CouponAPI.Controllers
                 var coupon = _mapper.Map<Coupon>(couponDto);
                 _db.Coupons.Add(coupon);
                 _db.SaveChanges();
+
+
+
+
+                var options = new Stripe.CouponCreateOptions
+                {
+                    AmountOff = (long)(couponDto.DiscountAmount * 100),
+                    Name = couponDto.CouponCode,
+                    Currency = "usd",
+                    Id = couponDto.CouponCode,
+                };
+                var service = new Stripe.CouponService();
+                service.Create(options);
+
+
+
+
+
                 response.Data = _mapper.Map<CouponDto>(coupon);
                 response.Message = "Coupon erfolgreich erstellt";
                 return CreatedAtAction(nameof(Get), new { id = coupon.CouponId }, response);
