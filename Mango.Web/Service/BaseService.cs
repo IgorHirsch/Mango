@@ -1,5 +1,4 @@
 ﻿using Mango.Web.Models;
-using Mango.Web.Models.Coupon;
 using Mango.Web.Service.IService;
 using Newtonsoft.Json;
 using System.Net;
@@ -16,7 +15,7 @@ namespace Mango.Web.Service
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly ITokenProvider _tokenProvider = tokenProvider;
 
-        public async Task<ResponseDTO?> SendAsync(RequestDto requestDto, bool withBearer = true)
+        public async Task<ResponseDTO?> SendAsync(RequestDTO requestDto, bool withBearer = true)
         {
             try
             {

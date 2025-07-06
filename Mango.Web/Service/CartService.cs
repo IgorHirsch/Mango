@@ -1,6 +1,5 @@
 ﻿using Mango.Web.Models;
 using Mango.Web.Models.Cart;
-using Mango.Web.Models.Coupon;
 using Mango.Web.Service.IService;
 using Mango.Web.Utility;
 
@@ -16,7 +15,7 @@ namespace Mango.Web.Service
 
         public async Task<ResponseDTO?> ApplyCouponAsync(CartDTO cartDto)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.POST,
                 Data = cartDto,
@@ -26,7 +25,7 @@ namespace Mango.Web.Service
 
         public async Task<ResponseDTO?> GetCartByUserIdAsync(string userId)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.GET,
                 Url = SD.ShoppingCartAPIBase + "/api/cart/GetCart/" + userId
@@ -36,7 +35,7 @@ namespace Mango.Web.Service
 
         public async Task<ResponseDTO?> RemoveFromCartAsync(int cartDetailsId)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.POST,
                 Data = cartDetailsId,
@@ -47,7 +46,7 @@ namespace Mango.Web.Service
 
         public async Task<ResponseDTO?> UpsertCartAsync(CartDTO cartDto)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.POST,
                 Data = cartDto,
@@ -58,7 +57,7 @@ namespace Mango.Web.Service
 
         public async Task<ResponseDTO?> EmailCart(CartDTO cartDto)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.POST,
                 Data = cartDto,

@@ -1,5 +1,6 @@
 using Mango.Web.Models;
 using Mango.Web.Models.Cart;
+using Mango.Web.Models.Order;
 using Mango.Web.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,11 @@ namespace Mango.Web.Controllers
     public class CartController : Controller
     {
         private readonly ICartService _cartService;
-        public CartController(ICartService cartService)
+        private readonly IOrderService _orderService;
+        public CartController(ICartService cartService, IOrderService orderService)
         {
             _cartService = cartService;
+            _orderService = orderService;
         }
 
         [Authorize]
@@ -21,12 +24,6 @@ namespace Mango.Web.Controllers
         {
             return View(await LoadCartDtoBasedOnLoggedInUser());
         }
-
-
-
-
-
-
 
         public async Task<IActionResult> Remove(int cartDetailsId)
         {
@@ -39,12 +36,6 @@ namespace Mango.Web.Controllers
             }
             return View();
         }
-
-
-
-
-
-
 
         [HttpPost]
         public async Task<IActionResult> ApplyCoupon(CartDTO cartDto)
@@ -89,7 +80,6 @@ namespace Mango.Web.Controllers
             return new CartDTO();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> EmailCart(CartDTO cartDto)
         {
@@ -121,5 +111,60 @@ namespace Mango.Web.Controllers
             TempData["error"] = "Failed to send the email.";
             return RedirectToAction(nameof(CartIndex));
         }
+
+        [Authorize]
+        public async Task<IActionResult> Checkout()
+        {
+            return View(await LoadCartDtoBasedOnLoggedInUser());
+        }
+
+
+        [HttpPost]
+        [ActionName("Checkout")]
+        public async Task<IActionResult> Checkout(CartDTO cartDto)
+        {
+
+            CartDTO cart = await LoadCartDtoBasedOnLoggedInUser();
+            if (cart.CartHeader != null && cartDto.CartHeader != null)
+            {
+                cart.CartHeader.Phone = cartDto.CartHeader.Phone;
+                cart.CartHeader.Email = cartDto.CartHeader.Email;
+                cart.CartHeader.Name = cartDto.CartHeader.Name;
+            }
+
+            var response = await _orderService.CreateOrder(cart);
+
+
+            if (response != null && response.IsSuccess)
+            {
+                OrderHeaderDTO? orderHeaderDto = null;
+                if (response.Data != null)
+                {
+                    var dataString = Convert.ToString(response.Data);
+                    if (!string.IsNullOrEmpty(dataString))
+                    {
+                        orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDTO>(dataString);
+                    }
+                }
+
+                if (orderHeaderDto != null)
+                {
+                    TempData["success"] = "Yes.";
+                    return View(cart);
+                }
+                else
+                {
+                    TempData["error"] = "Order creation failed. Please try again.";
+                    return View(cart);
+                }
+            }
+
+            TempData["error"] = "Order creation failed. Please try again.";
+
+            // ?? FIX: Always return the model
+            return View(cart);
+        }
+
+
     }
 }

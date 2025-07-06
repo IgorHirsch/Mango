@@ -1,5 +1,4 @@
 ﻿using Mango.Web.Models;
-using Mango.Web.Models.Coupon;
 using Mango.Web.Models.Product;
 using Mango.Web.Utility;
 
@@ -15,7 +14,7 @@ namespace Mango.Web.Service.IService
 
         public async Task<ResponseDTO?> CreateProductsAsync(ProductDTO productDto)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.POST,
                 Data = productDto,
@@ -25,7 +24,7 @@ namespace Mango.Web.Service.IService
 
         public async Task<ResponseDTO?> DeleteProductsAsync(int id)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.DELETE,
                 Url = SD.ProductAPIBase + "/api/product/" + id
@@ -34,7 +33,7 @@ namespace Mango.Web.Service.IService
 
         public async Task<ResponseDTO?> GetAllProductsAsync()
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.GET,
                 Url = SD.ProductAPIBase + "/api/product"
@@ -43,7 +42,7 @@ namespace Mango.Web.Service.IService
 
         public async Task<ResponseDTO?> GetProductAsync(string productCode)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.GET,
                 Url = SD.ProductAPIBase + "/api/product/GetByCode/" + productCode
@@ -52,7 +51,7 @@ namespace Mango.Web.Service.IService
 
         public async Task<ResponseDTO?> GetProductByIdAsync(int id)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.GET,
                 Url = SD.ProductAPIBase + "/api/product/" + id
@@ -61,7 +60,7 @@ namespace Mango.Web.Service.IService
 
         public async Task<ResponseDTO?> UpdateProductsAsync(ProductDTO productDto)
         {
-            return await _baseService.SendAsync(new RequestDto()
+            return await _baseService.SendAsync(new RequestDTO()
             {
                 ApiType = SD.ApiType.PUT,
                 Data = productDto,

@@ -1,8 +1,8 @@
 using static Mango.Web.Utility.SD;
 
-namespace Mango.Web.Models.Coupon
+namespace Mango.Web.Models
 {
-    public class RequestDto
+    public class RequestDTO
     {
         public string? AccessToken { get; set; }
         public object? Data { get; set; }
