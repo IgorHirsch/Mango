@@ -46,7 +46,7 @@ namespace Mango.Web.Controllers
             ResponseDTO? response = await _cartService.ApplyCouponAsync(cartDto);
             if (response != null && response.IsSuccess)
             {
-                TempData["success"] = "Cart updated successfully";
+                TempData["success"] = "Coupon applied successfully";
                 return RedirectToAction(nameof(CartIndex));
             }
             return View();
@@ -65,6 +65,10 @@ namespace Mango.Web.Controllers
             return View();
         }
 
+
+
+
+
         private async Task<CartDTO> LoadCartDtoBasedOnLoggedInUser()
         {
             var userId = User.Claims.Where(u => u.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault()?.Value;
@@ -81,6 +85,10 @@ namespace Mango.Web.Controllers
             }
             return new CartDTO();
         }
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> EmailCart(CartDTO cartDto)
@@ -158,6 +166,8 @@ namespace Mango.Web.Controllers
         }
 
 
+
+        //Button Zahlen In Stripe
         public async Task<IActionResult> Confirmation(int orderId)
         {
             ResponseDTO? response = await _orderService.ValidateStripeSession(orderId);
