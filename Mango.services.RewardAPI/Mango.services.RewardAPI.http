@@ -1,0 +1,6 @@
+@Mango.services.RewardAPI_HostAddress = http://localhost:5239
+
+GET {{Mango.services.RewardAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

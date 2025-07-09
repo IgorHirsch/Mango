@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Mango.MessageBus;
 using Mango.Services.OrderAPI.Data;
 using Mango.Services.OrderAPI.Models.DTO;
 using Mango.Services.OrderAPI.Models.DTO.Cart;
 using Mango.Services.OrderAPI.Models.DTO.Order;
+using Mango.Services.OrderAPI.Models.DTO.RewardsDTO;
 using Mango.Services.OrderAPI.Models.DTO.StripeDTO;
 using Mango.Services.OrderAPI.Models.Order;
 using Mango.Services.OrderAPI.Services.IServices;
@@ -22,13 +24,23 @@ namespace Mango.Services.OrderAPI.Controllers
         private IMapper _mapper;
         private readonly AppDbContext _db;
         private IProductService _productService;
+
+        private readonly IMessageBus _messageBus;
+        private readonly IConfiguration _configuration;
+
+
         public OrderAPIController(AppDbContext db,
-            IProductService productService, IMapper mapper)
+                                  IProductService productService,
+                                  IMapper mapper,
+                                  IConfiguration configuration,
+                                  IMessageBus messageBus)
         {
             _db = db;
             this._response = new ResponseDTO();
             _productService = productService;
             _mapper = mapper;
+            _configuration = configuration;
+            _messageBus = messageBus;
         }
 
         [Authorize]
@@ -142,6 +154,18 @@ namespace Mango.Services.OrderAPI.Controllers
                     orderHeader.PaymentIntentId = paymentIntent.Id;
                     orderHeader.Status = SD.Status_Approved;
                     _db.SaveChanges();
+
+
+                    RewardsDto rewardsDto = new()
+                    {
+                        OrderId = orderHeader.OrderHeaderId,
+                        RewardsActivity = Convert.ToInt32(orderHeader.OrderTotal),
+                        UserId = orderHeader.UserId
+                    };
+                    string topicName = _configuration.GetValue<string>("TopicAndQueueNames:OrderCreatedTopic");
+                    await _messageBus.PublishMessage(rewardsDto, topicName);
+
+
 
                     _response.Data = _mapper.Map<OrderHeaderDTO>(orderHeader);
                 }
