@@ -66,11 +66,6 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
                     {
                         cart.CartHeader.CartTotal -= coupon.DiscountAmount;
                         cart.CartHeader.Discount = coupon.DiscountAmount;
-                        Console.WriteLine($"Rabatt angewendet: {coupon.DiscountAmount}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Kein Rabatt angewendet");
                     }
                 }
 

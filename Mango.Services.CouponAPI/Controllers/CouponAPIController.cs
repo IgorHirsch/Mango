@@ -63,32 +63,6 @@ namespace Mango.Services.CouponAPI.Controllers
         }
 
 
-        [HttpGet("GetByCode/{code}")]
-        public ActionResult<ApiResponse<CouponDto>> GetByCode(string code)
-        {
-            var response = new ApiResponse<CouponDto>();
-            try
-            {
-                var coupon = _db.Coupons.FirstOrDefault(u => u.CouponCode.ToLower() == code.ToLower());
-                if (coupon == null)
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Coupon nicht gefunden";
-                    return NotFound(response);
-                }
-                response.Data = _mapper.Map<CouponDto>(coupon);
-                response.Message = "Coupon erfolgreich abgerufen";
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-                return StatusCode(500, response);
-            }
-            return Ok(response);
-        }
-
-
 
 
         [HttpPost]
@@ -185,13 +159,8 @@ namespace Mango.Services.CouponAPI.Controllers
                 }
                 _db.Coupons.Remove(coupon);
                 _db.SaveChanges();
-
-                var service = new Stripe.CouponService();
-                service.Delete(coupon.CouponCode);
-
-
                 response.Data = true;
-                response.Message = "Coupon erfolgreich gelï¿½scht";
+                response.Message = "Coupon erfolgreich gelöscht";
             }
             catch (Exception ex)
             {
