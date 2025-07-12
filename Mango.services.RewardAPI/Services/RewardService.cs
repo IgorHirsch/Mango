@@ -29,10 +29,12 @@ namespace Mango.services.RewardAPI.Services
                 await using var _db = new AppDbContext(_dbOptions);
                 await _db.Rewards.AddAsync(reward);
                 await _db.SaveChangesAsync();
+
+                Console.WriteLine("Reward erfolgreich gespeichert!");
             }
             catch (Exception ex)
             {
-                // Optional: Log ex.Message
+                Console.WriteLine("Fehler beim Speichern des Rewards: " + ex.Message);
             }
         }
 

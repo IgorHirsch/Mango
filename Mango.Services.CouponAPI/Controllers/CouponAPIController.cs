@@ -34,9 +34,6 @@ namespace Mango.Services.CouponAPI.Controllers
             return Ok(response);
         }
 
-
-
-
         [HttpGet("{id:int}")]
         public ActionResult<ApiResponse<CouponDto>> Get(int id)
         {
@@ -62,8 +59,30 @@ namespace Mango.Services.CouponAPI.Controllers
             return Ok(response);
         }
 
-
-
+        [HttpGet("GetByCode/{code}")]
+        public ActionResult<ApiResponse<CouponDto>> GetByCode(string code)
+        {
+            var response = new ApiResponse<CouponDto>();
+            try
+            {
+                var coupon = _db.Coupons.FirstOrDefault(u => u.CouponCode.ToLower() == code.ToLower());
+                if (coupon == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Coupon nicht gefunden";
+                    return NotFound(response);
+                }
+                response.Data = _mapper.Map<CouponDto>(coupon);
+                response.Message = "Coupon erfolgreich abgerufen";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return StatusCode(500, response);
+            }
+            return Ok(response);
+        }
 
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
@@ -77,9 +96,6 @@ namespace Mango.Services.CouponAPI.Controllers
                 _db.Coupons.Add(coupon);
                 _db.SaveChanges();
 
-
-
-
                 var options = new Stripe.CouponCreateOptions
                 {
                     AmountOff = (long)(couponDto.DiscountAmount * 100),
@@ -89,10 +105,6 @@ namespace Mango.Services.CouponAPI.Controllers
                 };
                 var service = new Stripe.CouponService();
                 service.Create(options);
-
-
-
-
 
                 response.Data = _mapper.Map<CouponDto>(coupon);
                 response.Message = "Coupon erfolgreich erstellt";
@@ -105,9 +117,6 @@ namespace Mango.Services.CouponAPI.Controllers
                 return StatusCode(500, response);
             }
         }
-
-
-
 
         [HttpPut("{id:int}")]
         [Authorize(Roles = "ADMIN")]
@@ -138,9 +147,6 @@ namespace Mango.Services.CouponAPI.Controllers
             }
             return Ok(response);
         }
-
-
-
 
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "ADMIN")]
