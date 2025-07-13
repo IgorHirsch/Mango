@@ -33,6 +33,10 @@
         public const string Status_Cancelled = "Cancelled";
 
 
-
+        public enum ContentType
+        {
+            Json,
+            MultipartFormData,
+        }
     }
 }
